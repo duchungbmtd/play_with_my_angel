@@ -248,7 +248,7 @@ export default function App() {
   const animalsElements = useMemo(() => animalsConfig.filter(a => enabledAnimals.includes(a.id)).map((item, index) => renderCard(item, index, 'animals')), [renderCard, enabledAnimals]);
 
   return (
-    <div className="w-full min-h-full flex flex-col items-center font-kid">
+    <div className="w-full relative flex flex-col items-center font-kid">
       {/* Header Container */}
       <div className="w-full max-w-4xl p-6 sm:p-8 flex flex-col items-center justify-center gap-6 z-10 bg-white/40 backdrop-blur-md shadow-lg rounded-b-[3rem] border-b-4 border-white/50">
         <motion.div 
@@ -326,11 +326,11 @@ export default function App() {
                 }}
               />
             </div>
-            <motion.div layout className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 sm:gap-6 mt-4 pb-8 w-full">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 sm:gap-6 mt-4 pb-8 w-full">
               <AnimatePresence>
                 {numbersElements}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -358,11 +358,11 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <motion.div layout className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 sm:gap-6 pb-8">
+            <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 sm:gap-6 pb-8">
               <AnimatePresence>
                 {colorsElements}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -385,11 +385,11 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <motion.div layout className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 pb-8 px-4">
+            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 pb-8 px-4">
               <AnimatePresence>
                 {shapesElements}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -412,11 +412,11 @@ export default function App() {
                 </button>
               ))}
             </div>
-            <motion.div layout className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 pb-8 px-4">
+            <div className="grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 pb-8 px-4">
               <AnimatePresence>
                 {animalsElements}
               </AnimatePresence>
-            </motion.div>
+            </div>
           </div>
         )}
       </div>
