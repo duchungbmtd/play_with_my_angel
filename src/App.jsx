@@ -248,7 +248,7 @@ export default function App() {
   const animalsElements = useMemo(() => animalsConfig.filter(a => enabledAnimals.includes(a.id)).map((item, index) => renderCard(item, index, 'animals')), [renderCard, enabledAnimals]);
 
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col items-center font-kid">
+    <div className="w-full min-h-full flex flex-col items-center font-kid">
       {/* Header Container */}
       <div className="w-full max-w-4xl p-6 sm:p-8 flex flex-col items-center justify-center gap-6 z-10 bg-white/40 backdrop-blur-md shadow-lg rounded-b-[3rem] border-b-4 border-white/50">
         <motion.div 
