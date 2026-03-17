@@ -4,7 +4,8 @@
 
 @layer base {
   html, body, #root {
-    @apply h-[100dvh] w-full bg-slate-50;
+    @apply min-h-[100dvh] w-full;
+    background-color: rgb(239 239 239);
     /* Prevent pull-to-refresh and other touch behaviors */
     overscroll-behavior: none;
     -webkit-touch-callout: none;
