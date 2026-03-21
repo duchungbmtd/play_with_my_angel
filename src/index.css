@@ -12,6 +12,14 @@
     overflow-x: hidden;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
+    
+    /* Prevent text selection and long-press callout */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    
+    /* Prevent double-tap to zoom */
+    touch-action: manipulation;
   }
 
   #root {
