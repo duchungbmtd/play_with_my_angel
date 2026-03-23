@@ -1,6 +1,6 @@
 import React, { useState, useDeferredValue, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Square, Circle, Triangle, Hexagon, Star, Heart, Octagon, Diamond, Cloud, Sun, Moon, Sparkles, Dog, Cat, Bird, Fish, Rabbit, Turtle, Bug, Snail, Squirrel, Ghost } from 'lucide-react';
+import { Square, Circle, Triangle, Hexagon, Star, Heart, Octagon, Diamond, Cloud, Sun, Moon, Sparkles, Dog, Cat, Bird, Fish, Rabbit, Turtle, Bug, Snail, Squirrel, Ghost, Pentagon, Flower, Snowflake, Droplet, Shield, Crown, Leaf, Flame } from 'lucide-react';
 
 // Animal Image Assets
 import dogImg from './assets/animals/dog.png';
@@ -13,6 +13,12 @@ import bugImg from './assets/animals/bug.png';
 import snailImg from './assets/animals/snail.png';
 import squirrelImg from './assets/animals/squirrel.png';
 import ghostImg from './assets/animals/ghost.png';
+import tigerNewImg from './assets/animals/tiger_new.png';
+import elephantImg from './assets/animals/elephant.png';
+import giraffeImg from './assets/animals/giraffe.png';
+import bearImg from './assets/animals/bear.png';
+import foxImg from './assets/animals/fox.png';
+import cowImg from './assets/animals/cow.png';
 
 // Vietnamese Alphabet Data (29 letters)
 const alphabetConfig = [
@@ -65,6 +71,21 @@ const colorsConfig = [
   { id: 'gray', colorClass: 'bg-gray-500', name: 'Màu xám' },
   { id: 'cyan', colorClass: 'bg-cyan-400', name: 'Màu xanh lơ' },
   { id: 'lime', colorClass: 'bg-lime-400', name: 'Màu xanh đọt chuối' },
+  { id: 'indigo', colorClass: 'bg-indigo-500', name: 'Màu chàm' },
+  { id: 'teal', colorClass: 'bg-teal-500', name: 'Xanh mòng két' },
+  { id: 'fuchsia', colorClass: 'bg-fuchsia-500', name: 'Màu tím đỏ' },
+  { id: 'emerald', colorClass: 'bg-emerald-500', name: 'Xanh ngọc lục bảo' },
+  { id: 'rose', colorClass: 'bg-rose-400', name: 'Màu hồng đào' },
+  { id: 'sky', colorClass: 'bg-sky-400', name: 'Xanh da trời' },
+  { id: 'amber', colorClass: 'bg-amber-500', name: 'Màu hổ phách' },
+  { id: 'violet', colorClass: 'bg-violet-500', name: 'Màu hoa cà' },
+  { id: 'red_dark', colorClass: 'bg-red-800', name: 'Màu đỏ đô' },
+  { id: 'green_dark', colorClass: 'bg-green-800', name: 'Xanh rêu' },
+  { id: 'slate', colorClass: 'bg-slate-600', name: 'Xanh đen' },
+  { id: 'yellow_light', colorClass: 'bg-yellow-200', name: 'Vàng nhạt' },
+  { id: 'orange_light', colorClass: 'bg-orange-300', name: 'Da cam nhạt' },
+  { id: 'blue_light', colorClass: 'bg-blue-300', name: 'Xanh lơ' },
+  { id: 'stone', colorClass: 'bg-stone-500', name: 'Màu đá' }
 ];
 
 // Shapes Data
@@ -80,7 +101,15 @@ const shapesConfig = [
   { id: 'cloud', icon: Cloud, name: 'Đám mây', color: 'text-slate-400' },
   { id: 'sun', icon: Sun, name: 'Mặt trời', color: 'text-amber-500' },
   { id: 'moon', icon: Moon, name: 'Mặt trăng', color: 'text-indigo-400' },
-  { id: 'sparkles', icon: Sparkles, name: 'Tia sáng', color: 'text-yellow-400' }
+  { id: 'sparkles', icon: Sparkles, name: 'Tia sáng', color: 'text-yellow-400' },
+  { id: 'pentagon', icon: Pentagon, name: 'Hình ngũ giác', color: 'text-teal-500' },
+  { id: 'flower', icon: Flower, name: 'Bông hoa', color: 'text-rose-400' },
+  { id: 'snowflake', icon: Snowflake, name: 'Bông tuyết', color: 'text-sky-300' },
+  { id: 'droplet', icon: Droplet, name: 'Giọt nước', color: 'text-blue-400' },
+  { id: 'shield', icon: Shield, name: 'Cái khiên', color: 'text-slate-600' },
+  { id: 'crown', icon: Crown, name: 'Vương miện', color: 'text-amber-400' },
+  { id: 'leaf', icon: Leaf, name: 'Cái lá', color: 'text-green-600' },
+  { id: 'flame', icon: Flame, name: 'Ngọn lửa', color: 'text-orange-500' }
 ];
 
 // Animals Data
@@ -94,19 +123,245 @@ const animalsConfig = [
   { id: 'bug', img: bugImg, name: 'Con bọ' },
   { id: 'snail', img: snailImg, name: 'Con ốc sên' },
   { id: 'squirrel', img: squirrelImg, name: 'Con sóc' },
-  { id: 'ghost', img: ghostImg, name: 'Con ma vui vẻ' }
+  { id: 'ghost', img: ghostImg, name: 'Con ma vui vẻ' },
+  { id: 'tiger_new', img: tigerNewImg, name: 'Con hổ' },
+  { id: 'elephant', img: elephantImg, name: 'Con voi' },
+  { id: 'giraffe', img: giraffeImg, name: 'Hươu cao cổ' },
+  { id: 'bear', img: bearImg, name: 'Con gấu' },
+  { id: 'fox', img: foxImg, name: 'Con cáo' },
+  { id: 'cow', img: cowImg, name: 'Bò sữa' }
 ];
+
+// Guess Picture Game Component
+function GuessPictureGame({ speak }) {
+  const [targetAnimal, setTargetAnimal] = useState(null);
+  const [options, setOptions] = useState([]);
+  const [revealedTiles, setRevealedTiles] = useState([]);
+  const [gameState, setGameState] = useState('playing'); // 'playing' | 'won'
+  const [shakeWrong, setShakeWrong] = useState(false);
+
+  const initGame = useCallback(() => {
+    if (animalsConfig.length < 4) return;
+    const targetIdx = Math.floor(Math.random() * animalsConfig.length);
+    const target = animalsConfig[targetIdx];
+    
+    const others = animalsConfig.filter((_, i) => i !== targetIdx);
+    others.sort(() => Math.random() - 0.5);
+    const wrongOptions = others.slice(0, 3);
+    
+    const allOptions = [target, ...wrongOptions].sort(() => Math.random() - 0.5);
+    
+    setTargetAnimal(target);
+    setOptions(allOptions);
+    setRevealedTiles([]);
+    setGameState('playing');
+  }, []);
+
+  React.useEffect(() => {
+    initGame();
+  }, [initGame]);
+
+  if (!targetAnimal) return null;
+
+  const handleTileClick = (index) => {
+    if (gameState !== 'playing') return;
+    if (!revealedTiles.includes(index)) {
+      setRevealedTiles(prev => [...prev, index]);
+    }
+  };
+
+  const handleOptionClick = (animal) => {
+    if (gameState !== 'playing') return;
+    if (animal.id === targetAnimal.id) {
+      setGameState('won');
+      setRevealedTiles([0,1,2,3,4,5,6,7,8]);
+      speak(targetAnimal.name);
+    } else {
+      setShakeWrong(true);
+      setTimeout(() => setShakeWrong(false), 500);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center w-full max-w-lg mx-auto gap-6 sm:gap-8 mt-4 pb-8 px-4">
+      <div className="text-center">
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-700 drop-shadow-sm">Hình gì đây nhỉ?</h2>
+        <p className="text-slate-500 font-bold mt-1">Mở lật các mảnh ghép và đoán nhé!</p>
+      </div>
+
+      {/* Grid Area */}
+      <div className="relative w-64 h-64 sm:w-80 sm:h-80 bg-white rounded-3xl shadow-xl overflow-hidden border-8 border-white shrink-0">
+        <img 
+          src={targetAnimal.img} 
+          alt="Hidden" 
+          className="absolute inset-0 w-full h-full object-contain p-6" 
+        />
+        
+        {/* The Grid Layer */}
+        <div key={targetAnimal.id} className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <motion.div
+              key={i}
+              onClick={() => handleTileClick(i)}
+              initial={{ opacity: 1, rotateY: 0 }}
+              animate={{ opacity: revealedTiles.includes(i) ? 0 : 1, rotateY: revealedTiles.includes(i) ? 90 : 0 }}
+              transition={{ duration: 0.4 }}
+              className="bg-sky-400 cursor-pointer shadow-sm flex items-center justify-center border-2 border-sky-300"
+              whileHover={!revealedTiles.includes(i) ? { scale: 0.95 } : {}}
+              whileTap={!revealedTiles.includes(i) ? { scale: 0.9 } : {}}
+            >
+              <div className="w-4 h-4 rounded-full bg-white/30" />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Options Area */}
+      <div className="w-full">
+        {gameState === 'won' ? (
+          <motion.div 
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="flex flex-col items-center gap-4"
+          >
+            <div className="text-3xl sm:text-4xl font-black text-rose-500 text-center animate-bounce mt-4">
+              Chính xác!
+            </div>
+            <button 
+              onClick={initGame}
+              className="px-8 py-4 mt-2 bg-emerald-500 text-white font-black text-xl sm:text-2xl rounded-full shadow-lg hover:bg-emerald-600 active:scale-95 transition-transform w-full max-w-xs border-4 border-emerald-400"
+            >
+              Chơi tiếp nào!
+            </button>
+          </motion.div>
+        ) : (
+          <motion.div 
+            animate={shakeWrong ? { x: [-10, 10, -10, 10, 0] } : {}}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-2 gap-3 sm:gap-4 w-full"
+          >
+            {options.map((opt) => (
+              <button
+                key={opt.id}
+                onClick={() => handleOptionClick(opt)}
+                className="bg-white/90 backdrop-blur-sm border-4 border-white shadow-md rounded-3xl p-3 flex justify-center items-center gap-3 hover:border-amber-300 hover:shadow-lg active:scale-95 transition-all text-slate-700 font-bold"
+              >
+                <img src={opt.img} alt={opt.name} className="w-10 h-10 sm:w-14 sm:h-14 object-contain" />
+                <span className="text-sm sm:text-lg">{opt.name}</span>
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const emojipediaAnimals = [
+  { id: 1, char: '🐶', name: 'Chó' }, { id: 2, char: '🐱', name: 'Mèo' }, { id: 3, char: '🐭', name: 'Chuột' }, { id: 4, char: '🐹', name: 'Chuột Hamster' },
+  { id: 5, char: '🐰', name: 'Thỏ' }, { id: 6, char: '🦊', name: 'Cáo' }, { id: 7, char: '🐻', name: 'Gấu' }, { id: 8, char: '🐼', name: 'Gấu trúc' },
+  { id: 9, char: '🐻‍❄️', name: 'Gấu Bắc cực' }, { id: 10, char: '🐨', name: 'Koala' }, { id: 11, char: '🐯', name: 'Hổ' }, { id: 12, char: '🦁', name: 'Sư tử' },
+  { id: 13, char: '🐮', name: 'Bò sữa' }, { id: 14, char: '🐷', name: 'Heo' }, { id: 15, char: '🐸', name: 'Ếch' }, { id: 16, char: '🐵', name: 'Khỉ' },
+  { id: 17, char: '🐔', name: 'Gà' }, { id: 18, char: '🐧', name: 'Chim cánh cụt' }, { id: 19, char: '🐦', name: 'Chim' }, { id: 20, char: '🐤', name: 'Gà con' },
+  { id: 21, char: '🦆', name: 'Vịt' }, { id: 22, char: '🦅', name: 'Đại bàng' }, { id: 23, char: '🦉', name: 'Cú mèo' }, { id: 24, char: '🦇', name: 'Dơi' },
+  { id: 25, char: '🐺', name: 'Chó sói' }, { id: 26, char: '🐗', name: 'Lợn rừng' }, { id: 27, char: '🐴', name: 'Ngựa' }, { id: 28, char: '🦄', name: 'Kỳ lân' },
+  { id: 29, char: '🐝', name: 'Con ong' }, { id: 30, char: '🐛', name: 'Sâu bọ' }, { id: 31, char: '🦋', name: 'Bướm' }, { id: 32, char: '🐌', name: 'Ốc sên' },
+  { id: 33, char: '🐞', name: 'Bọ rùa' }, { id: 34, char: '🐜', name: 'Kiến' }, { id: 35, char: '🦟', name: 'Muỗi' }, { id: 36, char: '🐢', name: 'Rùa' },
+  { id: 37, char: '🐍', name: 'Rắn' }, { id: 38, char: '🦎', name: 'Thằn lằn' }, { id: 39, char: '🦖', name: 'Khủng long' }, { id: 40, char: '🦕', name: 'Khủng long cổ dài' },
+  { id: 41, char: '🐙', name: 'Bạch tuộc' }, { id: 42, char: '🦑', name: 'Mực' }, { id: 43, char: '🦐', name: 'Tôm' }, { id: 44, char: '🦞', name: 'Tôm hùm' },
+  { id: 45, char: '🦀', name: 'Cua' }, { id: 46, char: '🐡', name: 'Cá nóc' }, { id: 47, char: '🐠', name: 'Cá nhiệt đới' }, { id: 48, char: '🐟', name: 'Cá' },
+  { id: 49, char: '🐬', name: 'Cá heo' }, { id: 50, char: '🐳', name: 'Cá voi' }, { id: 51, char: '🐋', name: 'Cá voi' }, { id: 52, char: '🦈', name: 'Cá mập' }, 
+  { id: 53, char: '🦭', name: 'Hải cẩu' }, { id: 54, char: '🐊', name: 'Cá sấu' }, { id: 55, char: '🐅', name: 'Cọp' }, { id: 56, char: '🐆', name: 'Báo' },
+  { id: 57, char: '🦓', name: 'Ngựa vằn' }, { id: 58, char: '🦍', name: 'Khỉ đột' }, { id: 59, char: '🦧', name: 'Đười ươi' }, { id: 60, char: '🐘', name: 'Voi' },
+  { id: 61, char: '🦛', name: 'Hà mã' }, { id: 62, char: '🦏', name: 'Tê giác' }, { id: 63, char: '🐪', name: 'Lạc đà' }, { id: 64, char: '🦒', name: 'Hươu cao cổ' },
+  { id: 65, char: '🦘', name: 'Kangaroo' }, { id: 66, char: '🐃', name: 'Trâu nước' }, { id: 67, char: '🐂', name: 'Bò tót' }, { id: 68, char: '🐑', name: 'Cừu' },
+  { id: 69, char: '🐐', name: 'Dê' }, { id: 70, char: '🦌', name: 'Nai' }, { id: 71, char: '🐕', name: 'Chó nhà' }, { id: 72, char: '🐈', name: 'Mèo cưng' },
+  { id: 73, char: '🐓', name: 'Gà trống' }, { id: 74, char: '🦃', name: 'Gà tây' }, { id: 75, char: '🦚', name: 'Con công' }, { id: 76, char: '🦜', name: 'Con vẹt' },
+  { id: 77, char: '🦢', name: 'Thiên nga' }, { id: 78, char: '🦩', name: 'Hồng hạc' }, { id: 79, char: '🕊️', name: 'Bồ câu trắng' }, { id: 80, char: '🐇', name: 'Thỏ trắng' },
+  { id: 81, char: '🦝', name: 'Gấu trúc Mỹ' }, { id: 82, char: '🦨', name: 'Chồn hôi' }, { id: 83, char: '🦡', name: 'Con lửng' }, { id: 84, char: '🦦', name: 'Rái cá' },
+  { id: 85, char: '🦥', name: 'Lười' }, { id: 86, char: '🐁', name: 'Chuột nhắt' }, { id: 87, char: '🐀', name: 'Chuột cống' }, { id: 88, char: '🐿️', name: 'Sóc' },
+  { id: 89, char: '🦔', name: 'Con nhím' }
+];
+
+function EmojipediaTab({ speak }) {
+  return (
+    <div className="flex flex-col items-center w-full max-w-4xl mx-auto gap-6 sm:gap-8 pb-12 px-2 sm:px-4 mt-4">
+      <div className="w-full bg-white/70 backdrop-blur-xl p-5 sm:p-8 rounded-3xl shadow-lg border-4 border-white flex flex-col items-center gap-2">
+        <h2 className="text-2xl sm:text-3xl font-black text-slate-700 drop-shadow-sm text-center">Thư viện Động Vật Khổng Lồ</h2>
+        <p className="text-slate-500 text-center text-sm sm:text-base font-bold max-w-2xl">
+          Danh sách gần 90 con vật dễ thương đã được ứng dụng tự động liệt kê sẵn cho bé! Bé chỉ việc lướt xem và bấm vào hình để nghe tiếng Việt nhé!
+        </p>
+      </div>
+
+      <div className="grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-7 gap-3 sm:gap-4 w-full mt-2">
+        {emojipediaAnimals.map((icon) => (
+          <motion.div
+            key={icon.id}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.15, y: -5 }}
+            onClick={() => speak(icon.name)}
+            className="bg-white rounded-[2rem] p-2 sm:p-4 shadow-sm border-4 border-white flex flex-col items-center justify-center cursor-pointer hover:shadow-xl hover:border-blue-300 transition-all aspect-square group relative"
+          >
+            <span className="text-[3.5rem] sm:text-[4.5rem] drop-shadow-md group-hover:scale-110 transition-transform leading-none">{icon.char}</span>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('numbers'); // 'numbers' | 'alphabet' | 'colors' | 'shapes' | 'animals'
   const [activeCardId, setActiveCardId] = useState(null);
-  const [maxNumber, setMaxNumber] = useState(9);
+  
+  const [maxNumber, setMaxNumber] = useState(() => {
+    const saved = localStorage.getItem('maxNumber');
+    return saved ? parseInt(saved) : 9;
+  });
   const deferredMaxNumber = useDeferredValue(maxNumber);
 
-  // Settings State for Colors, Shapes, and Animals
-  const [enabledColors, setEnabledColors] = useState(colorsConfig.map(c => c.id));
-  const [enabledShapes, setEnabledShapes] = useState(shapesConfig.map(s => s.id));
-  const [enabledAnimals, setEnabledAnimals] = useState(animalsConfig.map(a => a.id));
+  // Settings State for Colors, Shapes, and Animals (init from local storage)
+  const [enabledColors, setEnabledColors] = useState(() => {
+    const saved = localStorage.getItem('enabledColors');
+    return saved ? JSON.parse(saved) : colorsConfig.map(c => c.id);
+  });
+  const [enabledShapes, setEnabledShapes] = useState(() => {
+    const saved = localStorage.getItem('enabledShapes');
+    return saved ? JSON.parse(saved) : shapesConfig.map(s => s.id);
+  });
+  const [enabledAnimals, setEnabledAnimals] = useState(() => {
+    const saved = localStorage.getItem('enabledAnimals');
+    return saved ? JSON.parse(saved) : animalsConfig.map(a => a.id);
+  });
+
+  // Tự động lưu thiết lập của các tab vào localStorage mỗi khi có thay đổi
+  React.useEffect(() => { localStorage.setItem('maxNumber', maxNumber.toString()); }, [maxNumber]);
+  React.useEffect(() => { localStorage.setItem('enabledColors', JSON.stringify(enabledColors)); }, [enabledColors]);
+  React.useEffect(() => { localStorage.setItem('enabledShapes', JSON.stringify(enabledShapes)); }, [enabledShapes]);
+  React.useEffect(() => { localStorage.setItem('enabledAnimals', JSON.stringify(enabledAnimals)); }, [enabledAnimals]);
+
+  // Quét các tuỳ chọn MỚI được thêm vào source code để tự động tự kích hoạt chúng (không đè lên config setting mà user đã tắt)
+  React.useEffect(() => {
+    const syncNewItems = (configList, stateSetter, keyPrefix) => {
+      const knownKey = `known_${keyPrefix}`;
+      const knownItems = JSON.parse(localStorage.getItem(knownKey) || '[]');
+      const currentIds = configList.map(i => i.id);
+      
+      const missingIds = currentIds.filter(id => !knownItems.includes(id));
+      if (missingIds.length > 0) {
+        stateSetter(prev => [...prev, ...missingIds]);
+      }
+      
+      if (missingIds.length > 0 || knownItems.length < currentIds.length) {
+         localStorage.setItem(knownKey, JSON.stringify(currentIds));
+      }
+    };
+
+    syncNewItems(colorsConfig, setEnabledColors, 'colors');
+    syncNewItems(shapesConfig, setEnabledShapes, 'shapes');
+    syncNewItems(animalsConfig, setEnabledAnimals, 'animals');
+  }, []);
 
   const toggleConfigItem = (id, type) => {
     if (type === 'colors') {
@@ -172,7 +427,7 @@ export default function App() {
       ttsText = item.name;
     }
 
-    const isActive = activeCardId?.startsWith(ttsText); // Check prefix since we added timestamp
+    const isActive = activeCardId?.startsWith(ttsText + '-'); // Check exact prefix since we added dash before timestamp
 
     return (
       <motion.div
@@ -226,23 +481,30 @@ export default function App() {
               <div className={`absolute w-[70%] h-[70%] rounded-full bg-white/40 blur-sm`} />
               <item.icon size={130} className={`sm:w-44 sm:h-44 z-10 pointer-events-none ${item.color} fill-current`} strokeWidth={2.5} />
             </div>
+          ) : type === 'alphabet' ? (
+            <div className="flex items-baseline gap-1 sm:gap-2 z-10 pointer-events-none drop-shadow-sm">
+              <span className="text-5xl sm:text-7xl font-black">{item}</span>
+              <span className="text-4xl sm:text-6xl font-bold opacity-60 mix-blend-overlay">{item.toLowerCase()}</span>
+            </div>
           ) : (
-            // Default Text mode (Numbers/Alphabet)
-            <span className={`
-              text-5xl sm:text-7xl font-extrabold z-10 pointer-events-none
-            `}>
-              {item}
-            </span>
+            // Number mode
+            <div className="z-10 pointer-events-none flex items-center justify-center w-full h-full p-2 sm:p-4">
+              <div className="bg-white/90 text-slate-700 tracking-tighter w-[80%] h-[80%] rounded-full flex items-center justify-center shadow-sm border-4 border-white group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                <span className="text-5xl sm:text-7xl font-black">
+                  {item}
+                </span>
+              </div>
+            </div>
           )}
       </motion.div>
     );
   }, [activeCardId, speak]);
 
   const numbersElements = useMemo(() => {
-    return Array.from({ length: deferredMaxNumber + 1 }, (_, i) => i).map((item, index) => renderCard(item, index, 'default'));
+    return Array.from({ length: deferredMaxNumber + 1 }, (_, i) => i).map((item, index) => renderCard(item, index, 'number'));
   }, [deferredMaxNumber, renderCard]);
 
-  const alphabetElements = useMemo(() => alphabetConfig.map((item, index) => renderCard(item, index, 'default')), [renderCard]);
+  const alphabetElements = useMemo(() => alphabetConfig.map((item, index) => renderCard(item, index, 'alphabet')), [renderCard]);
   const colorsElements = useMemo(() => colorsConfig.filter(c => enabledColors.includes(c.id)).map((item, index) => renderCard(item, index, 'colors')), [renderCard, enabledColors]);
   const shapesElements = useMemo(() => shapesConfig.filter(s => enabledShapes.includes(s.id)).map((item, index) => renderCard(item, index, 'shapes')), [renderCard, enabledShapes]);
   const animalsElements = useMemo(() => animalsConfig.filter(a => enabledAnimals.includes(a.id)).map((item, index) => renderCard(item, index, 'animals')), [renderCard, enabledAnimals]);
@@ -289,7 +551,9 @@ export default function App() {
             { id: 'alphabet', label: 'Học Chữ', color: 'bg-blue-400' },
             { id: 'colors', label: 'Học Màu', color: 'bg-pink-400' },
             { id: 'shapes', label: 'Học Hình', color: 'bg-emerald-400' },
-            { id: 'animals', label: 'Động Vật', color: 'bg-orange-400' }
+            { id: 'animals', label: 'Động Vật', color: 'bg-orange-400' },
+            { id: 'guess_picture', label: 'Đoán Hình', color: 'bg-rose-400' },
+            { id: 'emojipedia', label: 'Emojipedia', color: 'bg-blue-400' }
           ].map(tab => (
 
             <button
@@ -419,6 +683,10 @@ export default function App() {
             </div>
           </div>
         )}
+
+        {activeTab === 'guess_picture' && <GuessPictureGame speak={speak} />}
+
+        {activeTab === 'emojipedia' && <EmojipediaTab speak={speak} />}
       </div>
     </div>
   );
