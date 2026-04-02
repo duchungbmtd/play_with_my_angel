@@ -1,6 +1,9 @@
 import React, { useState, useDeferredValue, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Square, Circle, Triangle, Hexagon, Star, Heart, Octagon, Diamond, Cloud, Sun, Moon, Sparkles, Dog, Cat, Bird, Fish, Rabbit, Turtle, Bug, Snail, Squirrel, Ghost, Pentagon, Flower, Snowflake, Droplet, Shield, Crown, Leaf, Flame } from 'lucide-react';
+import { 
+  Square, Circle, Triangle, Hexagon, Star, Heart, Octagon, Diamond, Cloud, Sun, Moon, Sparkles, Dog, Cat, Bird, Fish, Rabbit, Turtle, Bug, Snail, Squirrel, Ghost, Pentagon, Flower, Snowflake, Droplet, Shield, Crown, Leaf, Flame,
+  Umbrella, Anchor, Music, Key, Apple, Car, Plane, Bell, Camera, Trophy
+} from 'lucide-react';
 
 // Animal Image Assets
 import dogImg from './assets/animals/dog.png';
@@ -19,6 +22,23 @@ import giraffeImg from './assets/animals/giraffe.png';
 import bearImg from './assets/animals/bear.png';
 import foxImg from './assets/animals/fox.png';
 import cowImg from './assets/animals/cow.png';
+import lionImg from './assets/animals/lion.png';
+import monkeyImg from './assets/animals/monkey.png';
+import frogImg from './assets/animals/frog.png';
+import zebraImg from './assets/animals/zebra.png';
+import penguinImg from './assets/animals/penguin.png';
+import pandaImg from './assets/animals/panda.png';
+import kangarooImg from './assets/animals/kangaroo.png';
+import rhinoImg from './assets/animals/rhino.png';
+import hippoImg from './assets/animals/hippo.png';
+import dolphinImg from './assets/animals/dolphin.png';
+import sharkImg from './assets/animals/shark.png';
+import owlImg from './assets/animals/owl.png';
+import beeImg from './assets/animals/bee.png';
+import butterflyImg from './assets/animals/butterfly.png';
+import crocodileImg from './assets/animals/crocodile.png';
+import antImg from './assets/animals/ant.png';
+import snakeImg from './assets/animals/snake.png';
 
 // Vietnamese Alphabet Data (29 letters)
 const alphabetConfig = [
@@ -109,7 +129,17 @@ const shapesConfig = [
   { id: 'shield', icon: Shield, name: 'Cái khiên', color: 'text-slate-600' },
   { id: 'crown', icon: Crown, name: 'Vương miện', color: 'text-amber-400' },
   { id: 'leaf', icon: Leaf, name: 'Cái lá', color: 'text-green-600' },
-  { id: 'flame', icon: Flame, name: 'Ngọn lửa', color: 'text-orange-500' }
+  { id: 'flame', icon: Flame, name: 'Ngọn lửa', color: 'text-orange-500' },
+  { id: 'umbrella', icon: Umbrella, name: 'Cái ô', color: 'text-sky-500' },
+  { id: 'anchor', icon: Anchor, name: 'Mỏ neo', color: 'text-slate-700' },
+  { id: 'music', icon: Music, name: 'Nốt nhạc', color: 'text-fuchsia-500' },
+  { id: 'key', icon: Key, name: 'Chìa khóa', color: 'text-amber-600' },
+  { id: 'apple', icon: Apple, name: 'Quả táo', color: 'text-red-500' },
+  { id: 'car', icon: Car, name: 'Ô tô', color: 'text-blue-600' },
+  { id: 'plane', icon: Plane, name: 'Máy bay', color: 'text-slate-500' },
+  { id: 'bell', icon: Bell, name: 'Cái chuông', color: 'text-yellow-500' },
+  { id: 'camera', icon: Camera, name: 'Máy ảnh', color: 'text-zinc-600' },
+  { id: 'trophy', icon: Trophy, name: 'Cúp vàng', color: 'text-amber-400' }
 ];
 
 // Animals Data
@@ -129,29 +159,48 @@ const animalsConfig = [
   { id: 'giraffe', img: giraffeImg, name: 'Hươu cao cổ' },
   { id: 'bear', img: bearImg, name: 'Con gấu' },
   { id: 'fox', img: foxImg, name: 'Con cáo' },
-  { id: 'cow', img: cowImg, name: 'Bò sữa' }
+  { id: 'cow', img: cowImg, name: 'Bò sữa' },
+  { id: 'lion', img: lionImg, name: 'Sư tử' },
+  { id: 'monkey', img: monkeyImg, name: 'Con khỉ' },
+  { id: 'frog', img: frogImg, name: 'Con ếch' },
+  { id: 'zebra', img: zebraImg, name: 'Ngựa vằn' },
+  { id: 'penguin', img: penguinImg, name: 'Chim cánh cụt' },
+  { id: 'panda', img: pandaImg, name: 'Gấu trúc' },
+  { id: 'kangaroo', img: kangarooImg, name: 'Chuột túi' },
+  { id: 'rhino', img: rhinoImg, name: 'Tê giác' },
+  { id: 'hippo', img: hippoImg, name: 'Hà mã' },
+  { id: 'dolphin', img: dolphinImg, name: 'Cá heo' },
+  { id: 'shark', img: sharkImg, name: 'Cá mập' },
+  { id: 'owl', img: owlImg, name: 'Cú mèo' },
+  { id: 'bee', img: beeImg, name: 'Con ong' },
+  { id: 'butterfly', img: butterflyImg, name: 'Con bướm' },
+  { id: 'crocodile', img: crocodileImg, name: 'Cá sấu' },
+  { id: 'ant', img: antImg, name: 'Con kiến' },
+  { id: 'snake', img: snakeImg, name: 'Con rắn' }
 ];
 
 // Guess Picture Game Component
 function GuessPictureGame({ speak }) {
-  const [targetAnimal, setTargetAnimal] = useState(null);
+  const [targetItem, setTargetItem] = useState(null);
   const [options, setOptions] = useState([]);
   const [revealedTiles, setRevealedTiles] = useState([]);
   const [gameState, setGameState] = useState('playing'); // 'playing' | 'won'
   const [shakeWrong, setShakeWrong] = useState(false);
 
   const initGame = useCallback(() => {
-    if (animalsConfig.length < 4) return;
-    const targetIdx = Math.floor(Math.random() * animalsConfig.length);
-    const target = animalsConfig[targetIdx];
+    const allItems = [...animalsConfig, ...shapesConfig];
+    if (allItems.length < 4) return;
     
-    const others = animalsConfig.filter((_, i) => i !== targetIdx);
+    const targetIdx = Math.floor(Math.random() * allItems.length);
+    const target = allItems[targetIdx];
+    
+    const others = allItems.filter((_, i) => i !== targetIdx);
     others.sort(() => Math.random() - 0.5);
     const wrongOptions = others.slice(0, 3);
     
     const allOptions = [target, ...wrongOptions].sort(() => Math.random() - 0.5);
     
-    setTargetAnimal(target);
+    setTargetItem(target);
     setOptions(allOptions);
     setRevealedTiles([]);
     setGameState('playing');
@@ -161,7 +210,7 @@ function GuessPictureGame({ speak }) {
     initGame();
   }, [initGame]);
 
-  if (!targetAnimal) return null;
+  if (!targetItem) return null;
 
   const handleTileClick = (index) => {
     if (gameState !== 'playing') return;
@@ -170,12 +219,12 @@ function GuessPictureGame({ speak }) {
     }
   };
 
-  const handleOptionClick = (animal) => {
+  const handleOptionClick = (item) => {
     if (gameState !== 'playing') return;
-    if (animal.id === targetAnimal.id) {
+    if (item.id === targetItem.id) {
       setGameState('won');
       setRevealedTiles([0,1,2,3,4,5,6,7,8]);
-      speak(targetAnimal.name);
+      speak(targetItem.name);
     } else {
       setShakeWrong(true);
       setTimeout(() => setShakeWrong(false), 500);
@@ -191,14 +240,20 @@ function GuessPictureGame({ speak }) {
 
       {/* Grid Area */}
       <div className="relative w-64 h-64 sm:w-80 sm:h-80 bg-white rounded-3xl shadow-xl overflow-hidden border-8 border-white shrink-0">
-        <img 
-          src={targetAnimal.img} 
-          alt="Hidden" 
-          className="absolute inset-0 w-full h-full object-contain p-6" 
-        />
+        {targetItem.img ? (
+          <img 
+            src={targetItem.img} 
+            alt="Hidden" 
+            className="absolute inset-0 w-full h-full object-contain p-6" 
+          />
+        ) : targetItem.icon ? (
+          <div className="absolute inset-0 w-full h-full flex items-center justify-center p-6 bg-slate-50">
+             <targetItem.icon className={`w-full h-full ${targetItem.color} fill-current`} strokeWidth={2.5} />
+          </div>
+        ) : null}
         
         {/* The Grid Layer */}
-        <div key={targetAnimal.id} className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0">
+        <div key={targetItem.id} className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-0 z-10">
           {Array.from({ length: 9 }).map((_, i) => (
             <motion.div
               key={i}
@@ -246,7 +301,11 @@ function GuessPictureGame({ speak }) {
                 onClick={() => handleOptionClick(opt)}
                 className="bg-white/90 backdrop-blur-sm border-4 border-white shadow-md rounded-3xl p-3 flex justify-center items-center gap-3 hover:border-amber-300 hover:shadow-lg active:scale-95 transition-all text-slate-700 font-bold"
               >
-                <img src={opt.img} alt={opt.name} className="w-10 h-10 sm:w-14 sm:h-14 object-contain" />
+                {opt.img ? (
+                  <img src={opt.img} alt={opt.name} className="w-10 h-10 sm:w-14 sm:h-14 object-contain" />
+                ) : opt.icon ? (
+                  <opt.icon className={`w-10 h-10 sm:w-14 sm:h-14 ${opt.color} fill-current`} strokeWidth={2.5} />
+                ) : null}
                 <span className="text-sm sm:text-lg">{opt.name}</span>
               </button>
             ))}
